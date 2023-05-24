@@ -455,16 +455,6 @@ var (
 
 	microShiftTypes = []explainExceptions{
 		{
-			gv:      schema.GroupVersion{Group: "authorization.openshift.io", Version: "v1"},
-			field:   "rolebindingrestrictions.spec",
-			pattern: `FIELDS\:.*`,
-		},
-		{
-			gv:      schema.GroupVersion{Group: "security.internal.openshift.io", Version: "v1"},
-			field:   "rangeallocations.range",
-			pattern: `FIELD\: +range`,
-		},
-		{
 			gv:      schema.GroupVersion{Group: "security.openshift.io", Version: "v1"},
 			field:   "securitycontextconstraints",
 			pattern: `FIELDS\:.*`,
@@ -566,7 +556,7 @@ var _ = g.Describe("[sig-cli] oc explain", func() {
 				e2e.Logf("Checking %s...", bt)
 				exist, err := exutil.DoesApiResourceExist(oc.AdminConfig(), bt.Resource, groupName)
 				o.Expect(err).NotTo(o.HaveOccurred())
-				if !exist {
+				if !exist && groupName == "security.openshift.io" {
 					g.Skip(fmt.Sprintf("Resource %s does not exist, skipping", bt.Resource))
 				}
 				o.Expect(verifySpecStatusExplain(oc, nil, bt)).NotTo(o.HaveOccurred())
@@ -600,7 +590,7 @@ var _ = g.Describe("[sig-cli] oc explain", func() {
 				gvr := st.gv.WithResource(resource[0])
 				exist, err := exutil.DoesApiResourceExist(oc.AdminConfig(), resource[0], groupName)
 				o.Expect(err).NotTo(o.HaveOccurred())
-				if !exist {
+				if !exist && groupName == "security.openshift.io" {
 					g.Skip(fmt.Sprintf("Resource %s does not exist, skipping", gvr))
 				}
 				o.Expect(verifyExplain(oc, nil, gvr,
@@ -608,6 +598,17 @@ var _ = g.Describe("[sig-cli] oc explain", func() {
 			}
 		})
 	}
+
+	g.It("should contain proper fields description for microshift types", func() {
+		for _, st := range microShiftTypes {
+			e2e.Logf("Checking %s, Field=%s...", st.gv, st.field)
+			resource := strings.Split(st.field, ".")
+			gvr := st.gv.WithResource(resource[0])
+			o.Expect(verifyExplain(oc, nil, gvr,
+				st.pattern, st.field, fmt.Sprintf("--api-version=%s", st.gv))).NotTo(o.HaveOccurred())
+		}
+	})
+
 })
 
 var _ = g.Describe("[sig-cli] oc explain networking types", func() {
