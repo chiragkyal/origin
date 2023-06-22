@@ -1569,17 +1569,17 @@ var Annotations = map[string]string{
 
 	"[sig-cli] oc explain should contain proper fields description for image.openshift.io [apigroup:image.openshift.io]": " [Suite:openshift/conformance/parallel]",
 
-	"[sig-cli] oc explain should contain proper fields description for microshift types": " [Suite:openshift/conformance/parallel]",
-
 	"[sig-cli] oc explain should contain proper fields description for oauth.openshift.io [apigroup:oauth.openshift.io]": " [Suite:openshift/conformance/parallel]",
 
 	"[sig-cli] oc explain should contain proper fields description for project.openshift.io [apigroup:project.openshift.io]": " [Suite:openshift/conformance/parallel]",
+
+	"[sig-cli] oc explain should contain proper fields description for rangeallocations of security.openshift.io [apigroup:security.openshift.io]": " [Suite:openshift/conformance/parallel]",
 
 	"[sig-cli] oc explain should contain proper fields description for route.openshift.io [apigroup:route.openshift.io]": " [Suite:openshift/conformance/parallel]",
 
 	"[sig-cli] oc explain should contain proper fields description for security.internal.openshift.io [apigroup:security.internal.openshift.io]": " [Suite:openshift/conformance/parallel]",
 
-	"[sig-cli] oc explain should contain proper fields description for security.openshift.io [apigroup:security.openshift.io]": " [Suite:openshift/conformance/parallel]",
+	"[sig-cli] oc explain should contain proper fields description for securitycontextconstraints of security.openshift.io [apigroup:security.openshift.io]": " [Suite:openshift/conformance/parallel]",
 
 	"[sig-cli] oc explain should contain proper fields description for template.openshift.io [apigroup:template.openshift.io]": " [Suite:openshift/conformance/parallel]",
 
@@ -1593,11 +1593,15 @@ var Annotations = map[string]string{
 
 	"[sig-cli] oc explain should contain spec+status for image.openshift.io [apigroup:image.openshift.io]": " [Suite:openshift/conformance/parallel]",
 
+	"[sig-cli] oc explain should contain spec+status for podsecuritypolicyreviews of security.openshift.io [apigroup:security.openshift.io]": " [Suite:openshift/conformance/parallel]",
+
+	"[sig-cli] oc explain should contain spec+status for podsecuritypolicyselfsubjectreviews of security.openshift.io [apigroup:security.openshift.io]": " [Suite:openshift/conformance/parallel]",
+
+	"[sig-cli] oc explain should contain spec+status for podsecuritypolicysubjectreviews of security.openshift.io [apigroup:security.openshift.io]": " [Suite:openshift/conformance/parallel]",
+
 	"[sig-cli] oc explain should contain spec+status for project.openshift.io [apigroup:project.openshift.io]": " [Suite:openshift/conformance/parallel]",
 
 	"[sig-cli] oc explain should contain spec+status for route.openshift.io [apigroup:route.openshift.io]": " [Suite:openshift/conformance/parallel]",
-
-	"[sig-cli] oc explain should contain spec+status for security.openshift.io [apigroup:security.openshift.io]": " [Suite:openshift/conformance/parallel]",
 
 	"[sig-cli] oc explain should contain spec+status for template.openshift.io [apigroup:template.openshift.io]": " [Suite:openshift/conformance/parallel]",
 
