@@ -501,6 +501,29 @@ func getCrdTypes(oc *exutil.CLI) []schema.GroupVersionResource {
 	return crdTypes
 }
 
+func doesCRDTypesExist(oc *exutil.CLI, CRDTypes []schema.GroupVersionResource) bool {
+	apiGroups, _, err := exutil.GetApiGroupsAndResources(oc.AdminConfig())
+	o.Expect(err).NotTo(o.HaveOccurred())
+
+	crdGroups := make(map[string]struct{})
+	for _, gvr := range CRDTypes {
+		if _, exists := crdGroups[gvr.Group]; !exists {
+			crdGroups[gvr.Group] = struct{}{}
+		}
+	}
+
+	for crdGroupName := range crdGroups {
+		for _, apiGroup := range apiGroups {
+			if crdGroupName == apiGroup.Name {
+				e2e.Logf("CRDTypes Exist")
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
 var _ = g.Describe("[sig-cli] oc explain", func() {
 	defer g.GinkgoRecover()
 
@@ -578,6 +601,9 @@ var _ = g.Describe("[sig-cli] oc explain", func() {
 		// 'machine' Types, just the 'base' Types
 		if *controlPlaneTopology == configv1.ExternalTopologyMode {
 			crdTypesTest = baseCRDTypes
+		}
+		if !doesCRDTypesExist(oc, crdTypesTest) {
+			g.Skip("CRDs do not exist, skipping")
 		}
 		for _, ct := range crdTypesTest {
 			e2e.Logf("Checking %s...", ct)

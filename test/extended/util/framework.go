@@ -2069,14 +2069,22 @@ func IsTechPreviewNoUpgrade(oc *CLI) bool {
 	return featureGate.Spec.FeatureSet == configv1.TechPreviewNoUpgrade
 }
 
+func GetApiGroupsAndResources(config *rest.Config) ([]*metav1.APIGroup, []*metav1.APIResourceList, error) {
+	discoveryClient, err := discovery.NewDiscoveryClientForConfig(config)
+	if err != nil {
+		return nil, nil, err
+	}
+	apiGroups, apiResourceList, err := discoveryClient.ServerGroupsAndResources()
+	if err != nil {
+		return nil, nil, err
+	}
+	return apiGroups, apiResourceList, nil
+}
+
 // DoesApiResourceExist searches the list of ApiResources and returns "true" if a given
 // apiResourceName Exists. Valid search strings are for example "cloudprivateipconfigs" or "machines".
 func DoesApiResourceExist(config *rest.Config, apiResourceName, groupVersionName string) (bool, error) {
-	discoveryClient, err := discovery.NewDiscoveryClientForConfig(config)
-	if err != nil {
-		return false, err
-	}
-	_, allResourceList, err := discoveryClient.ServerGroupsAndResources()
+	_, allResourceList, err := GetApiGroupsAndResources(config)
 	if err != nil {
 		return false, err
 	}
