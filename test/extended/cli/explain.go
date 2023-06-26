@@ -566,7 +566,7 @@ var _ = g.Describe("[sig-cli] oc explain", func() {
 		types := bets
 		for _, bet := range types {
 			resourceName := bet.Resource
-			g.It(fmt.Sprintf("should contain spec+status for %s of %s [apigroup:%s]", resourceName, groupName, groupName), func() {
+			g.It(fmt.Sprintf("should contain spec+status for %s of %s, if the resource is present [apigroup:%s]", resourceName, groupName, groupName), func() {
 				e2e.Logf("Checking %s of %s...", resourceName, groupName)
 				exist, err := exutil.DoesApiResourceExist(oc.AdminConfig(), resourceName, groupName)
 				o.Expect(err).NotTo(o.HaveOccurred())
@@ -613,7 +613,7 @@ var _ = g.Describe("[sig-cli] oc explain", func() {
 		types := sets
 		for _, set := range types {
 			resourceName := strings.Split(set.field, ".")[0]
-			g.It(fmt.Sprintf("should contain proper fields description for %s of %s [apigroup:%s]", resourceName, groupName, groupName), func() {
+			g.It(fmt.Sprintf("should contain proper fields description for %s of %s, if the resource is present [apigroup:%s]", resourceName, groupName, groupName), func() {
 				e2e.Logf("Checking %s, Field=%s...", set.gv, set.field)
 				gvr := set.gv.WithResource(resourceName)
 				exist, err := exutil.DoesApiResourceExist(oc.AdminConfig(), resourceName, groupName)
