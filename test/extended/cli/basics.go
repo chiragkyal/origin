@@ -250,6 +250,11 @@ var _ = g.Describe("[sig-cli] oc basics", func() {
 	})
 
 	g.It("can show correct whoami result with console", func() {
+		nsExist, err := exutil.IsNamespaceExist(oc, "openshift-config-managed")
+		o.Expect(err).NotTo(o.HaveOccurred())
+		if !nsExist {
+			g.Skip("openshift-config-managed namespace does not exist, skipping")
+		}
 		out, err := oc.Run("whoami").Args("--show-console").Output()
 		o.Expect(err).NotTo(o.HaveOccurred())
 		found := consolePattern.MatchString(out)

@@ -2094,6 +2094,24 @@ func DoesApiResourceExist(config *rest.Config, apiResourceName, groupVersionName
 	return false, nil
 }
 
+func IsNamespaceExist(oc *CLI, namespace string) (bool, error) {
+	ns, err := oc.AdminKubeClient().CoreV1().Namespaces().Get(context.Background(), namespace, metav1.GetOptions{})
+	if err != nil {
+		if kapierrs.IsNotFound(err) {
+			e2e.Logf("%s namespace not found", namespace)
+			return false, nil
+		}
+		e2e.Logf("error accessing %s namespace: %v", namespace, err)
+		return false, err
+	}
+	if ns == nil {
+		e2e.Logf("%s namespace is nil", namespace)
+		return false, nil
+	}
+
+	return true, nil
+}
+
 func groupName(groupVersionName string) string {
 	return strings.Split(groupVersionName, "/")[0]
 }
