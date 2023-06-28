@@ -26,7 +26,8 @@ var (
 		"[Disabled:Unimplemented]": {},
 		// tests that rely on special configuration that we do not yet support
 		"[Disabled:SpecialConfig]": {
-			`\[Feature:Audit\]`, // Needs special configuration
+			`\[Feature:Audit\]`,      // Needs special configuration
+			`\[Feature:ImageQuota\]`, // Quota isn't turned on by default, we should do that and then reenable these tests
 		},
 		// tests that are known broken and need to be fixed upstream or in openshift
 		// always add an issue here
@@ -52,9 +53,6 @@ var (
 			// https://issues.redhat.com/browse/OCPBUGS-3339
 			`\[sig-devex\]\[Feature:ImageEcosystem\]\[mysql\]\[Slow\] openshift mysql image Creating from a template should instantiate the template`,
 			`\[sig-devex\]\[Feature:ImageEcosystem\]\[mariadb\]\[Slow\] openshift mariadb image Creating from a template should instantiate the template`,
-
-			// https://issues.redhat.com/browse/OCPBUGS-11652
-			`\[sig-cli\] oc adm node-logs`,
 		},
 		// tests that need to be temporarily disabled while the rebase is in progress.
 		"[Disabled:RebaseInProgress]": {
@@ -72,6 +70,7 @@ var (
 		},
 		// tests that must be run without competition
 		"[Serial]": {
+			`\[Disruptive\]`,
 			`\[sig-network\]\[Feature:EgressIP\]`,
 		},
 		// tests that can't be run in parallel with a copy of itself

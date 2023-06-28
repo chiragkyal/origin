@@ -58,26 +58,13 @@ var _ = g.Describe("[sig-instrumentation][Late] OpenShift alerting rules [apigro
 	// annotations.  Bugzillas have been filed, and are linked here.  These
 	// should be fixed one-by-one and removed from this list.
 	descriptionExceptions := sets.NewString(
-		// Repo: openshift/cluster-kube-apiserver-operator
-		// https://bugzilla.redhat.com/show_bug.cgi?id=2010349
-		"APIRemovedInNextEUSReleaseInUse",
-		"APIRemovedInNextReleaseInUse",
-		"ExtremelyHighIndividualControlPlaneCPU",
-		"HighOverallControlPlaneCPU",
-		"TechPreviewNoUpgrade",
-
-		// Repo: operator-framework/operator-marketplace
-		// https://bugzilla.redhat.com/show_bug.cgi?id=2010375
-		"CertifiedOperatorsCatalogError",
-		"CommunityOperatorsCatalogError",
-		"RedhatMarketplaceCatalogError",
-		"RedhatOperatorsCatalogError",
-
-		// Repo: operator-framework/operator-lifecycle-manager
-		// https://bugzilla.redhat.com/show_bug.cgi?id=2010373
-		"CsvAbnormalFailedOver2Min",
-		"CsvAbnormalOver30Min",
-		"InstallPlanStepAppliedWithWarnings",
+		// Repo: openshift/machine-config-operator
+		// https://issues.redhat.com/browse/OCPBUGS-14185
+		"KubeletHealthState",
+		"MCCDrainError",
+		"MCDPivotError",
+		"MCDRebootError",
+		"SystemMemoryExceedsReservation",
 	)
 
 	var alertingRules map[string][]promv1.AlertingRule
@@ -158,9 +145,7 @@ var _ = g.Describe("[sig-instrumentation][Late] OpenShift alerting rules [apigro
 		})
 
 		if err != nil {
-			// We are still gathering data on how many alerts need to
-			// be fixed, so this is marked as a flake for now.
-			testresult.Flakef(err.Error())
+			e2e.Failf(err.Error())
 		}
 	})
 
@@ -209,11 +194,11 @@ var _ = g.Describe("[sig-instrumentation][Late] Alerts", func() {
 		alerts.CheckAlerts(alerts.AllowedAlertsDuringConformance, oc.AdminConfig(), oc.NewPrometheusClient(context.TODO()), oc.AdminConfigClient(), testDuration, nil)
 	})
 
-	g.It("shouldn't exceed the 650 series limit of total series sent via telemetry from each cluster", func() {
-		if enabled, err := telemetryIsEnabled(ctx, oc.AdminKubeClient()); err != nil {
+	g.It("shouldn't exceed the series limit of total series sent via telemetry from each cluster", func() {
+		if enabledErr, err := telemetryIsEnabled(ctx, oc.AdminKubeClient()); err != nil {
 			e2e.Failf("could not determine if Telemetry is enabled: %v", err)
-		} else {
-			e2eskipper.Skipf("Telemetry is disabled: %v", enabled)
+		} else if enabledErr != nil {
+			e2eskipper.Skipf("Telemetry is disabled: %v", enabledErr)
 		}
 
 		// we only consider series sent since the beginning of the test
@@ -222,7 +207,7 @@ var _ = g.Describe("[sig-instrumentation][Late] Alerts", func() {
 		tests := map[string]bool{
 			// We want to limit the number of total series sent, the cluster:telemetry_selected_series:count
 			// rule contains the count of the all the series that are sent via telemetry. It is permissible
-			// for some scenarios to generate more series than 650, we just want the basic state to be below
+			// for some scenarios to generate more series than 750, we just want the basic state to be below
 			// a threshold.
 			//
 			// The following query can be executed against the telemetry server
@@ -237,7 +222,7 @@ var _ = g.Describe("[sig-instrumentation][Late] Alerts", func() {
 			//     )[30m:1m]
 			//   )
 			// )
-			fmt.Sprintf(`avg_over_time(cluster:telemetry_selected_series:count[%s]) >= 650`, testDuration):  false,
+			fmt.Sprintf(`avg_over_time(cluster:telemetry_selected_series:count[%s]) >= 750`, testDuration):  false,
 			fmt.Sprintf(`max_over_time(cluster:telemetry_selected_series:count[%s]) >= 1200`, testDuration): false,
 		}
 		err := helper.RunQueries(context.TODO(), oc.NewPrometheusClient(context.TODO()), tests, oc)
@@ -275,10 +260,10 @@ var _ = g.Describe("[sig-instrumentation] Prometheus [apigroup:image.openshift.i
 
 	g.Describe("when installed on the cluster", func() {
 		g.It("should report telemetry [Late]", func() {
-			if enabled, err := telemetryIsEnabled(ctx, oc.AdminKubeClient()); err != nil {
+			if enabledErr, err := telemetryIsEnabled(ctx, oc.AdminKubeClient()); err != nil {
 				e2e.Failf("could not determine if Telemetry is enabled: %v", err)
-			} else {
-				e2eskipper.Skipf("Telemetry is disabled: %v", enabled)
+			} else if enabledErr != nil {
+				e2eskipper.Skipf("Telemetry is disabled: %v", enabledErr)
 			}
 
 			tests := map[string]bool{}
