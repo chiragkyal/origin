@@ -637,7 +637,7 @@ var Annotations = map[string]string{
 
 	"[sig-cli] oc adm new-project [apigroup:project.openshift.io][apigroup:authorization.openshift.io]": " [Suite:openshift/conformance/parallel]",
 
-	"[sig-cli] oc adm node-logs": " [Disabled:Broken]",
+	"[sig-cli] oc adm node-logs": " [Suite:openshift/conformance/parallel]",
 
 	"[sig-cli] oc adm policy [apigroup:authorization.openshift.io][apigroup:user.openshift.io]": " [Suite:openshift/conformance/parallel]",
 
@@ -1185,6 +1185,10 @@ var Annotations = map[string]string{
 
 	"[sig-instrumentation][Late] OpenShift alerting rules [apigroup:image.openshift.io] should have description and summary annotations": " [Skipped:Disconnected] [Suite:openshift/conformance/parallel]",
 
+	"[sig-instrumentation][Late] OpenShift alerting rules [apigroup:image.openshift.io] should link to a valid URL if the runbook_url annotation is defined": " [Suite:openshift/conformance/parallel]",
+
+	"[sig-instrumentation][Late] OpenShift alerting rules [apigroup:image.openshift.io] should link to an HTTP(S) location if the runbook_url annotation is defined": " [Suite:openshift/conformance/parallel]",
+
 	"[sig-instrumentation][sig-builds][Feature:Builds] Prometheus when installed on the cluster should start and expose a secured proxy and verify build metrics [apigroup:build.openshift.io]": " [Skipped:Disconnected] [Suite:openshift/conformance/parallel]",
 
 	"[sig-kubevirt] services when running openshift cluster on KubeVirt virtual machines should allow connections to pods from guest cluster PodNetwork pod via LoadBalancer service across different guest nodes": " [Suite:openshift/conformance/parallel]",
@@ -1386,6 +1390,8 @@ var Annotations = map[string]string{
 	"[sig-node] Managed cluster record the number of nodes at the beginning of the tests [Early]": " [Suite:openshift/conformance/parallel]",
 
 	"[sig-node] Managed cluster should report ready nodes the entire duration of the test run [Late][apigroup:monitoring.coreos.com]": " [Skipped:Disconnected] [Suite:openshift/conformance/parallel]",
+
+	"[sig-node] Managed cluster should verify that nodes have no unexpected reboots [Late]": " [Suite:openshift/conformance/parallel]",
 
 	"[sig-node] should override timeoutGracePeriodSeconds when annotation is set": " [Suite:openshift/conformance/parallel]",
 

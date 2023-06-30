@@ -12,10 +12,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/openshift/origin/pkg/monitor/monitorapi"
 	"github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/util/retry"
+
+	"github.com/openshift/origin/pkg/monitor/monitorapi"
 )
 
 const (
@@ -160,6 +161,10 @@ func UploadIntervalsToLoki(intervals monitorapi.Intervals) error {
 
 		for _, lp := range locatorParts {
 			parts := strings.Split(lp, "/")
+			if len(parts) < 2 {
+				logrus.Warnf("unable to split locator parts: %+v", lp)
+				continue
+			}
 			tag, val := parts[0], parts[1]
 			if strings.TrimSpace(tag) == "" {
 				// Have seen this fail on: WARN[0002] unable to process locator tag: May 12 11:10:00.000 I /machine-config reason/OperatorVersionChanged clusteroperator/machine-config-operator version changed from [{operator 4.14.0-0.nightly-2023-05-03-163151}] to [{operator 4.14.0-0.nightly-2023-05-12-121801}]
@@ -167,6 +172,10 @@ func UploadIntervalsToLoki(intervals monitorapi.Intervals) error {
 				logrus.Warnf("unable to process locator tag: %+v", i)
 				continue
 			}
+
+			// some locator fields can slip in with '-', which is not a valid json key and then breaks unpack in loki.
+			// replace them with '_'.
+			tag = strings.ReplaceAll(tag, "-", "_")
 
 			// WARNING: opting for a potentially risky change here, I want namespace filtering to be available as a
 			// label in loki soon,	and thus I am translating some labels we used historically in origin intervals to
@@ -189,6 +198,11 @@ func UploadIntervalsToLoki(intervals monitorapi.Intervals) error {
 		if err != nil {
 			logrus.WithError(err).Errorf("unable to mashall log line to json: %s", logLine)
 			continue
+		}
+
+		if strings.HasPrefix(logLine["namespace"], "openshift-") {
+			// If we have a namespace in the locator, bump it up to a proper loki label:
+			labels["namespace"] = logLine["namespace"]
 		}
 
 		values = append(values, []interface{}{

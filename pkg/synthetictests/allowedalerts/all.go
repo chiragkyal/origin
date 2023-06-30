@@ -48,11 +48,17 @@ func AllAlertTests(jobType *platformidentification.JobType, etcdAllowance AlertT
 	ret = append(ret, newAlert("machine config operator", "MCDDrainError", jobType).pending().neverFail().toTests()...)
 	ret = append(ret, newAlert("machine config operator", "MCDDrainError", jobType).firing().toTests()...)
 
+	ret = append(ret, newAlert("single-node", "KubeMemoryOvercommit", jobType).pending().neverFail().toTests()...)
+	// this appears to have no direct impact on the cluster in CI.  It's important in general, but for CI we're willing to run pretty hot.
+	ret = append(ret, newAlert("single-node", "KubeMemoryOvercommit", jobType).firing().neverFail().toTests()...)
 	ret = append(ret, newAlert("machine config operator", "MCDPivotError", jobType).pending().neverFail().toTests()...)
 	ret = append(ret, newAlert("machine config operator", "MCDPivotError", jobType).firing().toTests()...)
 
 	ret = append(ret, newAlert("monitoring", "PrometheusOperatorWatchErrors", jobType).pending().neverFail().toTests()...)
 	ret = append(ret, newAlert("monitoring", "PrometheusOperatorWatchErrors", jobType).firing().toTests()...)
+
+	ret = append(ret, newAlert("networking", "OVNKubernetesResourceRetryFailure", jobType).pending().neverFail().toTests()...)
+	ret = append(ret, newAlert("networking", "OVNKubernetesResourceRetryFailure", jobType).firing().toTests()...)
 
 	ret = append(ret, newAlert("OLM", "RedhatOperatorsCatalogError", jobType).pending().neverFail().toTests()...)
 	ret = append(ret, newAlert("OLM", "RedhatOperatorsCatalogError", jobType).firing().toTests()...)
