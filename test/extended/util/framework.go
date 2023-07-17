@@ -2069,6 +2069,24 @@ func IsTechPreviewNoUpgrade(oc *CLI) bool {
 	return featureGate.Spec.FeatureSet == configv1.TechPreviewNoUpgrade
 }
 
+func IsNamespaceExist(kubeClient *kubernetes.Clientset, namespace string) (bool, error) {
+	ns, err := kubeClient.CoreV1().Namespaces().Get(context.Background(), namespace, metav1.GetOptions{})
+	if err != nil {
+		if kapierrs.IsNotFound(err) {
+			e2e.Logf("%s namespace not found", namespace)
+			return false, nil
+		}
+		e2e.Logf("error accessing %s namespace: %v", namespace, err)
+		return false, err
+	}
+	if ns == nil {
+		e2e.Logf("%s namespace is nil", namespace)
+		return false, nil
+	}
+
+	return true, nil
+}
+
 // DoesApiResourceExist searches the list of ApiResources and returns "true" if a given
 // apiResourceName Exists. Valid search strings are for example "cloudprivateipconfigs" or "machines".
 func DoesApiResourceExist(config *rest.Config, apiResourceName, groupVersionName string) (bool, error) {
@@ -2094,9 +2112,9 @@ func DoesApiResourceExist(config *rest.Config, apiResourceName, groupVersionName
 	return false, nil
 }
 
-func IsMicroShiftCluster(oc *CLI) (bool, error) {
+func IsMicroShiftCluster(clientSet k8sclient.Interface) (bool, error) {
 	// MicroShift cluster contains "microshift-version" configmap in "kube-public" namespace
-	cm, err := oc.AdminKubeClient().CoreV1().ConfigMaps("kube-public").Get(context.Background(), "microshift-version", metav1.GetOptions{})
+	cm, err := clientSet.CoreV1().ConfigMaps("kube-public").Get(context.Background(), "microshift-version", metav1.GetOptions{})
 	if err != nil {
 		if kapierrs.IsNotFound(err) {
 			e2e.Logf("microshift-version configmap not found")
