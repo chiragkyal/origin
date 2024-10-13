@@ -114,6 +114,10 @@ spec:
     - testName: '[sig-network][OCPFeatureGate:NetworkSegmentation][Feature:UserDefinedPrimaryNetworks]
         when using openshift ovn-kubernetes is isolated from the default network with
         L3 dualstack primary UDN'
+  - featureGate: RouteExternalCertificate
+    tests:
+    - testName: '[sig-network][OCPFeatureGate:RouteExternalCertificate][Feature:Router][apigroup:route.openshift.io]
+        The router should support external certificate'
   - featureGate: SELinuxMount
     tests:
     - testName: '[sig-storage] CSI Mock selinux on mount SELinuxMount [LinuxOnly]
