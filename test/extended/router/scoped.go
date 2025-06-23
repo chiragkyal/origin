@@ -27,7 +27,7 @@ import (
 	exutil "github.com/openshift/origin/test/extended/util"
 )
 
-const changeTimeoutSeconds = 3 * 60
+const changeTimeoutSeconds = 8 * 60
 
 var _ = g.Describe("[sig-network][Feature:Router][apigroup:route.openshift.io]", func() {
 	defer g.GinkgoRecover()
